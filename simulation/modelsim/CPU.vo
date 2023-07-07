@@ -1,0 +1,238 @@
+// Copyright (C) 1991-2013 Altera Corporation
+// Your use of Altera Corporation's design tools, logic functions 
+// and other software and tools, and its AMPP partner logic 
+// functions, and any output files from any of the foregoing 
+// (including device programming or simulation files), and any 
+// associated documentation or information are expressly subject 
+// to the terms and conditions of the Altera Program License 
+// Subscription Agreement, Altera MegaCore Function License 
+// Agreement, or other applicable license agreement, including, 
+// without limitation, that your use is for the sole purpose of 
+// programming logic devices manufactured by Altera and sold by 
+// Altera or its authorized distributors.  Please refer to the 
+// applicable agreement for further details.
+
+// VENDOR "Altera"
+// PROGRAM "Quartus II 64-Bit"
+// VERSION "Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition"
+
+// DATE "07/07/2023 06:24:31"
+
+// 
+// Device: Altera EP4CE115F29C7 Package FBGA780
+// 
+
+// 
+// This Verilog file should be used for ModelSim-Altera (Verilog) only
+// 
+
+`timescale 1 ps/ 1 ps
+
+module ALUControlUnit (
+	ALUOp,
+	Funct,
+	ALUControl);
+input 	[1:0] ALUOp;
+input 	[5:0] Funct;
+output 	[2:0] ALUControl;
+
+// Design Ports Information
+// Funct[1]	=>  Location: PIN_AB10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Funct[3]	=>  Location: PIN_AF24,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Funct[4]	=>  Location: PIN_F27,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Funct[5]	=>  Location: PIN_AH18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUControl[0]	=>  Location: PIN_C4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUControl[1]	=>  Location: PIN_C5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUControl[2]	=>  Location: PIN_B3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUOp[1]	=>  Location: PIN_D5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ALUOp[0]	=>  Location: PIN_B4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Funct[0]	=>  Location: PIN_A3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Funct[2]	=>  Location: PIN_C6,	 I/O Standard: 2.5 V,	 Current Strength: Default
+
+
+wire gnd;
+wire vcc;
+wire unknown;
+
+assign gnd = 1'b0;
+assign vcc = 1'b1;
+assign unknown = 1'bx;
+
+tri1 devclrn;
+tri1 devpor;
+tri1 devoe;
+wire \Funct[1]~input_o ;
+wire \Funct[3]~input_o ;
+wire \Funct[4]~input_o ;
+wire \Funct[5]~input_o ;
+wire \ALUControl[0]~output_o ;
+wire \ALUControl[1]~output_o ;
+wire \ALUControl[2]~output_o ;
+wire \ALUOp[0]~input_o ;
+wire \ALUOp[1]~input_o ;
+wire \Funct[0]~input_o ;
+wire \Funct[2]~input_o ;
+wire \ALUControl~0_combout ;
+wire \ALUControl~1_combout ;
+
+
+// Location: IOOBUF_X3_Y73_N23
+cycloneive_io_obuf \ALUControl[0]~output (
+	.i(\ALUControl~0_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUControl[0]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ALUControl[0]~output .bus_hold = "false";
+defparam \ALUControl[0]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X3_Y73_N9
+cycloneive_io_obuf \ALUControl[1]~output (
+	.i(\ALUControl~1_combout ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUControl[1]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ALUControl[1]~output .bus_hold = "false";
+defparam \ALUControl[1]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X5_Y73_N2
+cycloneive_io_obuf \ALUControl[2]~output (
+	.i(\ALUOp[0]~input_o ),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ALUControl[2]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ALUControl[2]~output .bus_hold = "false";
+defparam \ALUControl[2]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOIBUF_X7_Y73_N22
+cycloneive_io_ibuf \ALUOp[0]~input (
+	.i(ALUOp[0]),
+	.ibar(gnd),
+	.o(\ALUOp[0]~input_o ));
+// synopsys translate_off
+defparam \ALUOp[0]~input .bus_hold = "false";
+defparam \ALUOp[0]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X3_Y73_N1
+cycloneive_io_ibuf \ALUOp[1]~input (
+	.i(ALUOp[1]),
+	.ibar(gnd),
+	.o(\ALUOp[1]~input_o ));
+// synopsys translate_off
+defparam \ALUOp[1]~input .bus_hold = "false";
+defparam \ALUOp[1]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X5_Y73_N8
+cycloneive_io_ibuf \Funct[0]~input (
+	.i(Funct[0]),
+	.ibar(gnd),
+	.o(\Funct[0]~input_o ));
+// synopsys translate_off
+defparam \Funct[0]~input .bus_hold = "false";
+defparam \Funct[0]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X5_Y73_N22
+cycloneive_io_ibuf \Funct[2]~input (
+	.i(Funct[2]),
+	.ibar(gnd),
+	.o(\Funct[2]~input_o ));
+// synopsys translate_off
+defparam \Funct[2]~input .bus_hold = "false";
+defparam \Funct[2]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: LCCOMB_X4_Y72_N8
+cycloneive_lcell_comb \ALUControl~0 (
+// Equation(s):
+// \ALUControl~0_combout  = (\ALUOp[1]~input_o  & ((\ALUOp[0]~input_o ) # ((\Funct[0]~input_o  & \Funct[2]~input_o ))))
+
+	.dataa(\ALUOp[0]~input_o ),
+	.datab(\ALUOp[1]~input_o ),
+	.datac(\Funct[0]~input_o ),
+	.datad(\Funct[2]~input_o ),
+	.cin(gnd),
+	.combout(\ALUControl~0_combout ),
+	.cout());
+// synopsys translate_off
+defparam \ALUControl~0 .lut_mask = 16'hC888;
+defparam \ALUControl~0 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: LCCOMB_X4_Y72_N2
+cycloneive_lcell_comb \ALUControl~1 (
+// Equation(s):
+// \ALUControl~1_combout  = (\ALUOp[0]~input_o ) # (((!\Funct[0]~input_o  & !\Funct[2]~input_o )) # (!\ALUOp[1]~input_o ))
+
+	.dataa(\ALUOp[0]~input_o ),
+	.datab(\ALUOp[1]~input_o ),
+	.datac(\Funct[0]~input_o ),
+	.datad(\Funct[2]~input_o ),
+	.cin(gnd),
+	.combout(\ALUControl~1_combout ),
+	.cout());
+// synopsys translate_off
+defparam \ALUControl~1 .lut_mask = 16'hBBBF;
+defparam \ALUControl~1 .sum_lutc_input = "datac";
+// synopsys translate_on
+
+// Location: IOIBUF_X38_Y0_N8
+cycloneive_io_ibuf \Funct[1]~input (
+	.i(Funct[1]),
+	.ibar(gnd),
+	.o(\Funct[1]~input_o ));
+// synopsys translate_off
+defparam \Funct[1]~input .bus_hold = "false";
+defparam \Funct[1]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X83_Y0_N8
+cycloneive_io_ibuf \Funct[3]~input (
+	.i(Funct[3]),
+	.ibar(gnd),
+	.o(\Funct[3]~input_o ));
+// synopsys translate_off
+defparam \Funct[3]~input .bus_hold = "false";
+defparam \Funct[3]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X115_Y56_N15
+cycloneive_io_ibuf \Funct[4]~input (
+	.i(Funct[4]),
+	.ibar(gnd),
+	.o(\Funct[4]~input_o ));
+// synopsys translate_off
+defparam \Funct[4]~input .bus_hold = "false";
+defparam \Funct[4]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X69_Y0_N1
+cycloneive_io_ibuf \Funct[5]~input (
+	.i(Funct[5]),
+	.ibar(gnd),
+	.o(\Funct[5]~input_o ));
+// synopsys translate_off
+defparam \Funct[5]~input .bus_hold = "false";
+defparam \Funct[5]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+assign ALUControl[0] = \ALUControl[0]~output_o ;
+
+assign ALUControl[1] = \ALUControl[1]~output_o ;
+
+assign ALUControl[2] = \ALUControl[2]~output_o ;
+
+endmodule

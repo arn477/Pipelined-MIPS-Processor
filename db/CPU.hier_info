@@ -1,0 +1,22 @@
+|ALUControlUnit
+ALUOp[0] => ALUControl.IN0
+ALUOp[0] => ALUControl.IN0
+ALUOp[0] => ALUControl.IN0
+ALUOp[0] => ALUControl.IN0
+ALUOp[1] => ALUControl.IN1
+ALUOp[1] => ALUControl.IN1
+ALUOp[1] => ALUControl.IN1
+ALUOp[1] => ALUControl.IN1
+Funct[0] => ALUControl.IN1
+Funct[0] => ALUControl.IN0
+Funct[1] => ~NO_FANOUT~
+Funct[2] => ALUControl.IN1
+Funct[2] => ALUControl.IN1
+Funct[3] => ~NO_FANOUT~
+Funct[4] => ~NO_FANOUT~
+Funct[5] => ~NO_FANOUT~
+ALUControl[0] <= ALUControl.DB_MAX_OUTPUT_PORT_TYPE
+ALUControl[1] <= ALUControl.DB_MAX_OUTPUT_PORT_TYPE
+ALUControl[2] <= ALUControl.DB_MAX_OUTPUT_PORT_TYPE
+
+
