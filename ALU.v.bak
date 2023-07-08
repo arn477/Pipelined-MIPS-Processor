@@ -1,0 +1,10 @@
+module mux21(a, b, out, select);
+input a,b, select;
+output out;
+
+//select = 0, out = a
+//select = 1, out = b
+
+assign out = (a&(~select))|(b&(~select));
+endmodule
+
