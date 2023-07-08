@@ -38,6 +38,8 @@ module ALU(A, B, ALUControl, out, zero);
 	ALU1Bit alu29 (A[29], B[29], ALUControl, 0, carryOut[28], out[29], carryOut[29]);
 	ALU1Bit alu30 (A[30], B[30], ALUControl, 0, carryOut[29], out[30], carryOut[30]);
 	ALU1BitMSB alu31 (A[31], B[31], ALUControl, 0, carryOut[30], out[31], carryOut[31],setLess);
+	
+	assign zero = ~|out;
 endmodule
 
 module ALU1Bit(A, B, Op, less, carryIn, out, carryOut);
