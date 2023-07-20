@@ -1,0 +1,14 @@
+module stallControlUnit (idExMemRead, idExRt, ifIdRs, ifIdRt, ifWrite, pcWrite, setControl);
+input idExMemRead;
+input [31:0] idExRt, ifIdRs, ifIdRt;
+output ifWrite, pcWrite, setControl;
+
+assign ifWrite = 1;
+assign pcWrite = 1;
+assign setControl = 0;
+
+if (idExMemRead && ((idExRt == ifIdRs) || (idExRt == ifIdRt)))
+	begin
+	assign ifWrite = 0;
+	assign pcWrite = 0;
+	assign setControl = 1;

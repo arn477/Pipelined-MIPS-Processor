@@ -1,0 +1,14 @@
+module forwardingUnit(exMemRegWrite, exMemRd, memWbRegWrite, memWbRd, idExRs, idExRt, forwardA, forwardB);
+input exMemRegWrite, memWbRegWrite;
+input [31:0] exMemRd, memWbRd, idExRs, idExRt;
+output [1:0] forwardA, forwardB;
+
+assign forwardA = 2'b00;
+assign forwardB = 2'b00;
+
+if (exMemRegWrite & (exMemRd != 0) & (exMemRd == idExRs))
+begin
+assign forwardA = 2'b10;
+end
+
+else if (exMemRegWrite & (exMemRd != 0) & (exMemRd == idExRt))
