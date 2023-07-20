@@ -11,11 +11,9 @@ always @(*)
 	resetIdControl = 1'b0;
 	
 	if (idExMemRead && ((idExRt == ifIdRs) || (idExRt == ifIdRt)))
-		begin
 		ifWrite = 1'b0;
 		pcWrite = 1'b0;
 		resetIdControl = 1'b1;
-		end
 	end
 	
 

@@ -1,0 +1,11 @@
+module busMux31(A, B, C, out, select)
+	input [31:0] A, B, C;
+	input [1:0] select;
+	output [31:0] out;
+	wire w1, w2;
+	
+	busMux21 mux1 (A, B, w1, select[0]);
+	busMux21 mux2 (C, A, w2, select[0]);
+	busMux21 mux3 (w1, w2, select[1]);
+endmodule
+	
