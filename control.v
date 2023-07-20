@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module control (opCode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, Jump);
 
 //declaring the input and output ports

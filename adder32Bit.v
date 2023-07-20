@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module adder32Bit(A,B,sum);
 	input[31:0] A, B;
 	output[31:0] sum;

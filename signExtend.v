@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module signExtend(in, out);
 	input [15:0] in;
 	output [31:0] out;

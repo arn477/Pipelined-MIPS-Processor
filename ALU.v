@@ -1,8 +1,9 @@
-module ALU(A, B, ALUControl, out, zero);
+`timescale 1 ps / 100 fs
+module ALU(A, B, ALUControl, out, zero, overflow);
 	input [31:0] A, B;
 	input [2:0] ALUControl;
 	output [31:0] out; 
-	output zero;
+	output zero, overflow;
 	wire [31:0] carryOut;
 	wire setLess;
 	
@@ -40,6 +41,7 @@ module ALU(A, B, ALUControl, out, zero);
 	ALU1BitMSB alu31 (A[31], B[31], ALUControl, 0, carryOut[30], out[31], carryOut[31],setLess);
 	
 	assign zero = ~|out;
+	xor(overflow, carryOut[31], carryOut[30]);
 endmodule
 
 module ALU1Bit(A, B, Op, less, carryIn, out, carryOut);
@@ -48,7 +50,7 @@ module ALU1Bit(A, B, Op, less, carryIn, out, carryOut);
 	input [2:0] Op;
 	output out, carryOut;
 	//inputs for the main mux and output of the mux that decides the final b value
-	wire muxIn0, muxIn1, muxIn3;
+	wire muxIn0, muxIn1, muxIn2;
 	
 	//decide whether the final B value is b or its negation depending on the bneg bit from O;
 	wire negatedB, bFinal;
@@ -60,12 +62,12 @@ module ALU1Bit(A, B, Op, less, carryIn, out, carryOut);
 	or (muxIn1, A, bFinal);
 	
 	//perform the addition or subtraction operation
-	adder add1 (A, B, carryIn, muxIn3, carryOut);
+	adder add1 (A, bFinal, carryIn, muxIn2, carryOut);
 	
 	//determine the output
 	wire tmp1, tmp2;
 	mux21 mux1 (muxIn0, muxIn1, tmp1, Op[0]);
-	mux21 mux2 (less, muxIn3, tmp2, Op[0]);
+	mux21 mux2 (muxIn2, less, tmp2, Op[0]);
 	mux21 mux3 (tmp1, tmp2, out, Op[1]);
 endmodule
 // same as the ALU1Bit module but it includes a set output for the slti instruction
@@ -75,10 +77,10 @@ module ALU1BitMSB(A, B, Op, less, carryIn, out, carryOut, set);
 	input [2:0] Op;
 	output out, carryOut, set;
 	//inputs for the main mux and output of the mux that decides the final b value
-	wire muxIn0, muxIn1, muxIn3, bFinal;
+	wire muxIn0, muxIn1, muxIn2;
 	
 	//decide whether the final B value is b or its negation depending on the bneg bit;
-	wire negatedB;
+	wire negatedB, bFinal;
 	assign negatedB = ~B;
 	mux21 bValue(B, negatedB, bFinal, Op[2]);
 
@@ -87,13 +89,13 @@ module ALU1BitMSB(A, B, Op, less, carryIn, out, carryOut, set);
 	or (muxIn1, A, bFinal);
 	
 	//perform the addition or subtraction operation
-	adder add1 (A, B, carryIn, muxIn3, carryOut);
-	assign set = muxIn3;
+	adder add1 (A, bFinal, carryIn, muxIn2, carryOut);
+	assign set = muxIn2;
 	
 	//determine the output
 	wire tmp1, tmp2;
 	mux21 mux1 (muxIn0, muxIn1, tmp1, Op[0]);
-	mux21 mux2 (less, muxIn3, tmp2, Op[0]);
+	mux21 mux2 (muxIn2, less, tmp2, Op[0]);
 	mux21 mux3 (tmp1, tmp2, out, Op[1]);
 endmodule
 
