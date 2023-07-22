@@ -1,5 +1,0 @@
-module registerFile(writeData, readData1, readData2, readReg1, readReg2, regWrite, rst, clk);
-	input [31:0] writeData;
-	input [4:0] readReg1, readReg2;
-	input regWrite, rst, clk;
-	output [31:0] readData1, readData2;

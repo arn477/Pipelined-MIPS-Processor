@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module bit5BusMux (A, B, out, select);
     input [4:0] A, B;
     input select;

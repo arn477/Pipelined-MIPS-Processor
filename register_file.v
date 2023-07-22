@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module register_file(writeData, readData1, readData2, readReg1, readReg2, writeReg, regWrite, rst, clk);
 	input [31:0] writeData;
 	input [4:0] readReg1, readReg2, writeReg;

@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 //supports 15 instructions of 32 bit size
 module InstructionMem(instruction, address);
 	output [31:0] instruction;

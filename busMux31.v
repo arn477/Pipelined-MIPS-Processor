@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module busMux31(A, B, C, out, select);
 	input [31:0] A, B, C;
 	input [1:0] select;

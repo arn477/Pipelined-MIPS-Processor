@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 module DataMem(address, writeData, readData, memWrite, memRead, clk);
 input [31:0] address, writeData;
 input memWrite, memRead, clk;

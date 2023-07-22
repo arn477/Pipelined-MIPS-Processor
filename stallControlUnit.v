@@ -1,8 +1,9 @@
+`timescale 1 ps / 100 fs
 module stallControlUnit (idExMemRead, idExRt, ifIdRs, ifIdRt, ifWrite, pcWrite, resetIdControl);
 input idExMemRead;
-input [31:0] idExRt, ifIdRs, ifIdRt;
-reg ifWrite, pcWrite, resetIdControl;
+input [4:0] idExRt, ifIdRs, ifIdRt;
 output ifWrite, pcWrite, resetIdControl;
+reg ifWrite, pcWrite, resetIdControl;
 
 always @(*)
 	begin

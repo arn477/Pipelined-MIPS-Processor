@@ -1,14 +1,20 @@
-module stallControlUnit (idExMemRead, idExRt, ifIdRs, ifIdRt, ifWrite, pcWrite, setControl);
+`timescale 1 ps / 100 fs
+module stallControlUnit (idExMemRead, idExRt, ifIdRs, ifIdRt, ifWrite, pcWrite, resetIdControl);
 input idExMemRead;
 input [31:0] idExRt, ifIdRs, ifIdRt;
-output ifWrite, pcWrite, setControl;
+reg ifWrite, pcWrite, resetIdControl;
+output ifWrite, pcWrite, resetIdControl;
 
-assign ifWrite = 1;
-assign pcWrite = 1;
-assign setControl = 0;
-
-if (idExMemRead && ((idExRt == ifIdRs) || (idExRt == ifIdRt)))
+always @(*)
 	begin
-	assign ifWrite = 0;
-	assign pcWrite = 0;
-	assign setControl = 1;
+	ifWrite = 1'b1;
+	pcWrite = 1'b1;
+	resetIdControl = 1'b0;
+	
+	if (idExMemRead && ((idExRt == ifIdRs) || (idExRt == ifIdRt)))
+		ifWrite = 1'b0;
+		pcWrite = 1'b0;
+		resetIdControl = 1'b1;
+	end
+
+endmodule

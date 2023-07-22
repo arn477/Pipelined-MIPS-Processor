@@ -1,6 +1,7 @@
+`timescale 1 ps / 100 fs
 module forwardingUnit(exMemRegWrite, exMemRd, memWbRegWrite, memWbRd, idExRs, idExRt, forwardA, forwardB);
 input exMemRegWrite, memWbRegWrite;
-input [31:0] exMemRd, memWbRd, idExRs, idExRt;
+input [4:0] exMemRd, memWbRd, idExRs, idExRt;
 output [1:0] forwardA, forwardB;
 reg [1:0] forwardA, forwardB;
 

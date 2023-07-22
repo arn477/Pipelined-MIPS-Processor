@@ -1,3 +1,4 @@
+`timescale 1 ps / 100 fs
 // 32 bit register to be used for pipelining
 module pipelineReg(regOut, regIn, regEn, rst, clk);
 	input [31:0] regIn;
