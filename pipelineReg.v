@@ -65,3 +65,15 @@ module reg1bit(in, out, enable, rst, clk);
 	or or1(d, w1, w2);
 	dFlipFlop d1(d,out,rst, clk);
 endmodule
+
+module reg5bit (in, out, enable, rst, clk);
+	input [4:0] in;
+	input enable, rst, clk;
+	output [4:0] out;
+
+	reg1bit reg5 (in[4], out[4], enable, rst, clk);
+	reg1bit reg4 (in[3], out[3], enable, rst, clk);
+	reg1bit reg3 (in[2], out[2], enable, rst, clk);
+	reg1bit reg2 (in[1], out[1], enable, rst, clk);
+	reg1bit reg1 (in[0], out[0], enable, rst, clk);
+endmodule

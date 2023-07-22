@@ -15,6 +15,5 @@ always @(*)
 		pcWrite = 1'b0;
 		resetIdControl = 1'b1;
 	end
-	
 
 endmodule
