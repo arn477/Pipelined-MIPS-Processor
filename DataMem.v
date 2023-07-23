@@ -6,7 +6,7 @@ output [31:0] readData;
 reg [31:0] readData;
 reg[7:0] ram[255:0];
 
-always @ (posedge clk)
+always @ (posedge clk or posedge memWrite or posedge memRead)
 	begin
 	if (memWrite)
 		begin

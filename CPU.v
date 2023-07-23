@@ -11,12 +11,12 @@ wire[4:0] rs, rt, rd;
 wire [15:0] imm;
 wire RegDst, Branch, MemRead, MemToReg, MemWrite, ALUSrc, RegWrite, Jump, resetIDControl;
 wire [1:0] ALUOp;
-wire [31:0] readData1, readData2, seImm;
+wire [31:0] readData1, readData2, seImm, readData1Final, readData2Final;
 //EX
 wire [4:0] EX_rt, EX_rd, EX_rs, EX_writeReg;
-wire [31:0] EX_readData1, EX_readData2, EX_Instruction, EX_Imm, EX_PC4;
+wire [31:0] EX_readData1, EX_readData2, EX_Instruction, EX_Imm, EX_PC4, EX_readData2Final;
 wire ID_Reset, EX_RegDst, EX_Branch, EX_MemRead, EX_MemToReg, EX_MemWrite, EX_ALUSrc, EX_RegWrite, EX_Jump;
-wire [1:0] EX_ALUOp, forwardA, forwardB;
+wire [1:0] EX_ALUOp, forwardA, forwardB, forwardC;
 wire [31:0] ALUInput1, ALUInput2, ALUOut, branchOffset, EX_branch_addr, EX_jump_addr, muxOut, shiftedJumpValue;
 wire [25:0] jumpValue;
 wire [2:0] ALUControl;
@@ -37,7 +37,7 @@ wire [31:0] WB_writeData, WB_ALUOut, WB_dataMemOut;
 //declare a 32 bit register to be our pc
 adder32Bit pcAdder (pc, {29'b0,3'b100}, pc4); //pc4 = pcOut + 4
 busMux21 branchMux(pc4, branch_addr, tmp, MEM_pcBranch); //choose branch address if pcBranch is 1
-busMux21 jumpMux(tmp, jump_addr, pcIn, MEM_jump); //choose jump address if jump is 1
+busMux21 jumpMux(tmp, jump_addr, pcIn, MEM_Jump); //choose jump address if jump is 1
 
 pipelineReg pcRegister(pc, pcIn, pcWrite_en, reset, clk);
 
@@ -45,7 +45,7 @@ pipelineReg pcRegister(pc, pcIn, pcWrite_en, reset, clk);
 InstructionMem instructions(instruction, pc);
 
 //======IF pipeline registers======
-assign IF_Reset = reset | MEM_pcBranch | MEM_jump; //reset if branch or jump
+assign IF_Reset = reset | MEM_pcBranch | MEM_Jump; //reset if branch or jump
 
 pipelineReg IF_PC4(ID_PC4, pc4, IF_Write, IF_Reset, clk);
 pipelineReg IF_Instructions(ID_Instruction, instruction, IF_Write, IF_Reset, clk);
@@ -63,27 +63,30 @@ register_file registers (WB_writeData, readData1, readData2, rs, rt, WB_writeReg
 
 signExtend se (imm, seImm); //sign extend the immediate value
 
+//======WB Forwarding Unit======
+wbForwardingUnit wbForwardUnit(readData1, readData2, WB_writeData, WB_RegWrite, WB_writeReg, rs, rt, readData1Final, readData2Final);
+
 //======Stall control unit======
 stallControlUnit stall (EX_MemRead, EX_rt, rs, rt, IF_Write, pcWrite_en, resetIDControl);
 
 //======ID pipeline registers======
 assign ID_Reset = IF_Reset | resetIDControl; // reset if stall, branch or jump
 
-pipelineReg ID_PC4reg(EX_PC4, ID_PC4, 1'b1, ID_Reset, clk);
-pipelineReg ID_rd1(EX_readData1, readData1, 1'b1, ID_Reset, clk);
-pipelineReg ID_rd2(EX_readData2, readData2, 1'b1, ID_Reset, clk);
-pipelineReg ID_Inst(EX_Instruction, ID_Instruction, 1'b1, ID_Reset, clk);
+pipelineReg ID_PC4reg(EX_PC4, ID_PC4, 1'b1, reset, clk);
+pipelineReg ID_rd1(EX_readData1, readData1Final, 1'b1, reset, clk);
+pipelineReg ID_rd2(EX_readData2, readData2Final, 1'b1, reset, clk);
+pipelineReg ID_Inst(EX_Instruction, ID_Instruction, 1'b1, reset, clk);
 pipelineReg ID_imm(EX_Imm, seImm, 1'b1, ID_Reset, clk);
-reg1bit ID_RegDst(EX_RegDst, RegDst, 1'b1, ID_Reset, clk);
-reg1bit ID_Branch(EX_Branch, Branch, 1'b1, ID_Reset, clk);
-reg1bit ID_MemRead(EX_MemRead, MemRead, 1'b1, ID_Reset, clk);
-reg1bit ID_MemToReg(EX_MemToReg, MemToReg, 1'b1, ID_Reset, clk);
-reg1bit ID_ALUOp1(EX_ALUOp[1], ALUOp[1], 1'b1, ID_Reset, clk);
-reg1bit ID_ALUOp0(EX_ALUOp[0], ALUOp[0], 1'b1, ID_Reset, clk);
-reg1bit ID_MemWrite(EX_MemWrite, MemWrite, 1'b1, ID_Reset, clk);
-reg1bit ID_ALUSrc(EX_ALUSrc, ALUSrc, 1'b1, ID_Reset, clk);
-reg1bit ID_RegWrite(EX_RegWrite, RegWrite, 1'b1, ID_Reset, clk);
-reg1bit ID_Jump(EX_Jump, Jump, 1'b1, ID_Reset, clk);
+reg1bit ID_RegDst(RegDst, EX_RegDst, 1'b1, ID_Reset, clk);
+reg1bit ID_Branch(Branch, EX_Branch, 1'b1, ID_Reset, clk);
+reg1bit ID_MemRead(MemRead, EX_MemRead, 1'b1, ID_Reset, clk);
+reg1bit ID_MemToReg(MemToReg, EX_MemToReg, 1'b1, ID_Reset, clk);
+reg1bit ID_ALUOp1(ALUOp[1], EX_ALUOp[1], 1'b1, ID_Reset, clk);
+reg1bit ID_ALUOp0(ALUOp[0], EX_ALUOp[0], 1'b1, ID_Reset, clk);
+reg1bit ID_MemWrite(MemWrite, EX_MemWrite, 1'b1, ID_Reset, clk);
+reg1bit ID_ALUSrc(ALUSrc, EX_ALUSrc, 1'b1, ID_Reset, clk);
+reg1bit ID_RegWrite(RegWrite, EX_RegWrite, 1'b1, ID_Reset, clk);
+reg1bit ID_Jump(Jump, EX_Jump, 1'b1, ID_Reset, clk);
 
 
 //====================Execution Stage====================
@@ -91,13 +94,14 @@ reg1bit ID_Jump(EX_Jump, Jump, 1'b1, ID_Reset, clk);
 assign EX_rt = EX_Instruction[20:16];
 assign EX_rs = EX_Instruction[25:21];
 
-forwardingUnit forwardUnit (MEM_RegWrite, MEM_writeReg, WB_RegWrite, WB_writeReg, EX_rs, EX_rt, forwardA, forwardB);
+forwardingUnit forwardUnit (MEM_RegWrite, MEM_writeReg, WB_RegWrite, WB_writeReg, EX_rs, EX_rt, EX_MemRead, EX_MemWrite, forwardA, forwardB, forwardC);
 
 //======ALU======
 busMux21 aluSource(EX_readData2, EX_Imm, muxOut, EX_ALUSrc); // choose immediate value if ALUSrc is 1
 // forward value from WB if forward A or B are 1 and from MEM if 2
 busMux31 aluIn1 (EX_readData1, WB_writeData, MEM_ALUOut, ALUInput1, forwardA);
 busMux31 aluIn2 (muxOut, WB_writeData, MEM_ALUOut, ALUInput2, forwardB);
+busMux31 Ex_readDataReg (EX_readData2, WB_writeData, MEM_ALUOut, EX_readData2Final, forwardC);
 
 assign functionCode = EX_Instruction[5:0];
 ALUControlUnit controlAlu (EX_ALUOp, functionCode, ALUControl);
@@ -121,29 +125,28 @@ bit5BusMux destinationMux(EX_rt, EX_rd, EX_writeReg, EX_RegDst); //choose reg to
 pipelineReg EX_jumpaddress (jump_addr, EX_jump_addr, 1'b1, reset, clk);
 pipelineReg EX_branchaddress(branch_addr, EX_branch_addr, 1'b1, reset, clk);
 pipelineReg EX_ALUOut(MEM_ALUOut, ALUOut, 1'b1, reset, clk);
-pipelineReg EX_readData2reg(MEM_readData2, EX_readData2, 1'b1, reset, clk);
-reg5bit EX_writeRegister(MEM_writeReg, EX_writeReg, 1'b1, reset, clk);
-reg1bit zeroBit(MEM_zero, zero, 1'b1, reset, clk);
-reg1bit branchBit(MEM_Branch, EX_Branch, 1'b1, reset, clk);
-reg1bit jumpBit(MEM_Jump, EX_Jump, 1'b1, reset, clk);
-reg1bit regWriteBit(MEM_RegWrite, EX_RegWrite, 1'b1, reset, clk);
-reg1bit memReadBit(MEM_MemRead, EX_MemRead, 1'b1, reset, clk);
-reg1bit memToRegBit(MEM_MemToReg, EX_MemToReg, 1'b1, reset, clk);
-reg1bit memWriteBit(MEM_MemWrite, EX_MemWrite, 1'b1, reset, clk);
+pipelineReg EX_readData2reg(MEM_readData2, EX_readData2Final, 1'b1, reset, clk);
+reg5bit EX_writeRegister(EX_writeReg, MEM_writeReg, 1'b1, reset, clk);
+reg1bit EX_zeroBit(zero, MEM_zero, 1'b1, reset, clk);
+reg1bit EX_branchBit(EX_Branch, MEM_Branch, 1'b1, reset, clk);
+reg1bit EX_jumpBit(EX_Jump, MEM_Jump, 1'b1, reset, clk);
+reg1bit EX_regWriteBit(EX_RegWrite, MEM_RegWrite, 1'b1, reset, clk);
+reg1bit EX_memReadBit(EX_MemRead, MEM_MemRead, 1'b1, reset, clk);
+reg1bit EX_memToRegBit(EX_MemToReg, MEM_MemToReg, 1'b1, reset, clk);
+reg1bit EX_memWriteBit(EX_MemWrite, MEM_MemWrite, 1'b1, reset, clk);
 
 
 //====================Memory Stage====================
 assign MEM_pcBranch = MEM_Branch & MEM_zero;
-
 //======Data Memory======
-DataMem dataMemory(Mem_ALUOut, MEM_readData2, dataMemOut, MEM_MemWrite, MEM_MemRead, clk);
+DataMem dataMemory(MEM_ALUOut, MEM_readData2, dataMemOut, MEM_MemWrite, MEM_MemRead, clk);
 
 //======MEM pipeline registers======
 pipelineReg MEM_ALUOutreg(WB_ALUOut, MEM_ALUOut, 1'b1, reset, clk);
 pipelineReg dataMemOutreg(WB_dataMemOut, dataMemOut, 1'b1, reset, clk);
-reg5bit MEM_writeRegreg(WB_writeReg, MEM_writeReg, 1'b1, reset, clk);
-reg1bit MEM_RegWritereg(WB_RegWrite, MEM_RegWrite, 1'b1, reset, clk);
-reg1bit memToRegBitreg(WB_MemToReg, MEM_MemToReg, 1'b1, reset, clk);
+reg5bit MEM_writeRegreg(MEM_writeReg, WB_writeReg, 1'b1, reset, clk);
+reg1bit MEM_RegWritereg(MEM_RegWrite, WB_RegWrite, 1'b1, reset, clk);
+reg1bit memToRegBitreg(MEM_MemToReg, WB_MemToReg, 1'b1, reset, clk);
 
 
 //====================Write Back Stage====================
